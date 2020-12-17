@@ -1,4 +1,4 @@
-# ProgettoCarusoFallicaDSBD
+# Progetto "3A" Caruso&Fallica DSBD 2020
 This project is made by Caruso Bartolomeo and Giuseppe Fallica for Distributed Systems Big Data 2020.
 
 ## Aim of this project
