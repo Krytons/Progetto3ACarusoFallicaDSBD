@@ -30,7 +30,7 @@ services:
       - mysqldb
     restart: always
     environment:
-      <<: *common-variables #Common variables will be used in blogpostmanager's dockerfile
+      <<: *common-variables #Common variables will be used in paymentmanager's dockerfile
 
 volumes:
   mystorage:
