@@ -12,10 +12,10 @@ services:
   mysqldb:
     image: mysql
     environment:
-      - MYSQL_DATABASE= ${DB_DATABASE}
-      - MYSQL_USER= ${DB_USER}
-      - MYSQL_PASSWORD= ${DB_PASSWORD}
-      - MYSQL_ROOT_PASSWORD= ${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     volumes:
       - mystorage:/var/lib/mysql
 
@@ -31,6 +31,7 @@ services:
     restart: always
     environment:
       <<: *common-variables #Common variables will be used in paymentmanager's dockerfile
+
 
 volumes:
   mystorage:
