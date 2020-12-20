@@ -19,13 +19,13 @@ services:
     volumes:
       - mystorage:/var/lib/mysql
 
-  ### PAYMENT-HANDLER ###
+  ### PAYMENT MANAGER ###
   paymentmanager:
     build:
-      context: . #This is the root of the project
+      context: . #This is the root of the project TestMicroservizi
       dockerfile: paymentmanager/Dockerfile
     ports:
-      - "3333:3333"
+      - "7777:7777"
     depends_on:
       - mysqldb
     restart: always
