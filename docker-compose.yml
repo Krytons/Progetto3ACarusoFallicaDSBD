@@ -6,6 +6,7 @@ x-common-variables: &common-variables
   DATASOURCE_PASSWORD: ${DB_PASSWORD}
   DATASOURCE_NAME: ${DB_DATABASE}
   DATASOURCE_PORT: ${DB_PORT}
+  PAYPAL_BUSINESS_MAIL: ${MY_PAYPAL_ACCOUNT}
 
 services:
   ### MY SQL ###
@@ -32,6 +33,18 @@ services:
     environment:
       <<: *common-variables #Common variables will be used in paymentmanager's dockerfile
 
+  zookeper:
+    image: wurstmeister/zookeeper
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+    - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeper:2181
+    depends_on:
+      - zookeper
 
 volumes:
   mystorage:

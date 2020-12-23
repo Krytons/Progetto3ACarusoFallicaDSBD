@@ -4,9 +4,9 @@ import carusofallica.lab.paymentmanager.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import payment.Ipn;
 import payment.Payment;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
 @Controller
@@ -38,6 +38,13 @@ public class PaymentController {
         Timestamp from = new Timestamp(fromTimestamp);
         Timestamp end = new Timestamp(endTimestamp);
         return service.getPaymentByDate(x_userId, from, end);
+    }
+
+    @PostMapping(path = "/ipn")
+    public @ResponseBody Payment
+    ipnFunction(@RequestBody Ipn ipn, @RequestHeader Integer x_userId){
+        //TODO: controlla x_userId
+        return service.ipn(ipn, x_userId);
     }
 
 }
