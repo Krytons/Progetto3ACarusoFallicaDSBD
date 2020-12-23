@@ -6,17 +6,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import payment.Payment;
 
-import java.util.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 @Controller
 @RequestMapping(path = "/payment")
 public class PaymentController {
+
     @Autowired
     PaymentService service;
 
     @GetMapping(path = "/all")
-    public @ResponseBody
-    Iterable<Payment> getAllPayments(){
+    public @ResponseBody Iterable<Payment> getAllPayments(){
         return service.getAllPayment();
     }
 
@@ -25,9 +26,18 @@ public class PaymentController {
         return service.getByPaymentId(id);
     }
 
+    @PostMapping(path="/insert")
+    public @ResponseBody Payment insertPayment(@RequestBody Payment payment){
+        return service.insertPayment(payment);
+    }
+
+    //@DateTimeFormat(iso=DateTimeFormat.ISO.DATE)
     @GetMapping(path = "/transactions/{fromTimestamp}/{endTimestamp}")
     public @ResponseBody Iterable<Payment>
-    getPaymentByDate(@PathVariable Date fromTimestamp, @PathVariable Date endTimestamp, @RequestHeader Integer x_userId){
-        return service.getPaymentByDate(x_userId, fromTimestamp, endTimestamp);
+    getPaymentByDate(@PathVariable long fromTimestamp, @PathVariable long endTimestamp, @RequestHeader Integer x_userId){
+        Timestamp from = new Timestamp(fromTimestamp);
+        Timestamp end = new Timestamp(endTimestamp);
+        return service.getPaymentByDate(x_userId, from, end);
     }
+
 }

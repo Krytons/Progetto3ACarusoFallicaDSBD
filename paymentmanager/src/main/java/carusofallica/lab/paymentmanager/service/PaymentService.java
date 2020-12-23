@@ -31,6 +31,14 @@ public class PaymentService {
         }
     }
 
+    public Payment insertPayment(Payment payment){
+        try{
+            return repository.save(payment);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid insert");
+        }
+    }
+
 
     //***** RICHIESTE DAL PROGETTO *****
     public Iterable<Payment> getPaymentByDate(Integer userId, Date fromTimestamp, Date endTimestamp){

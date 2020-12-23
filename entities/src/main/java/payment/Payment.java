@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -24,10 +25,10 @@ public class Payment {
     private Double amountPayed;
 
     @NotNull(message = "A payment must have a creation date")
-    private Date createdAt;
+    private Timestamp createdAt;
 
     @NotNull(message = "A payment must have a modification date")
-    private Date modifiedAt;
+    private Timestamp modifiedAt;
 
 
     public Integer getId() {
@@ -70,7 +71,7 @@ public class Payment {
         return createdAt;
     }
 
-    public Payment setCreatedAt(Date createdAt) {
+    public Payment setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
         return this;
     }
@@ -79,7 +80,7 @@ public class Payment {
         return modifiedAt;
     }
 
-    public Payment setModifiedAt(Date modifiedAt) {
+    public Payment setModifiedAt(Timestamp modifiedAt) {
         this.modifiedAt = modifiedAt;
         return this;
     }
