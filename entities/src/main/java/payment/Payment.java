@@ -1,5 +1,8 @@
 package payment;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,10 +27,10 @@ public class Payment {
     @NotNull(message = "A payment must have an amount_payed value")
     private Double amountPayed;
 
-    @NotNull(message = "A payment must have a creation date")
+    @CreationTimestamp
     private Timestamp createdAt;
 
-    @NotNull(message = "A payment must have a modification date")
+    @UpdateTimestamp
     private Timestamp modifiedAt;
 
 
