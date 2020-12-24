@@ -15,7 +15,6 @@ import payment.Ipn;
 import payment.Payment;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Service
 @Transactional
@@ -93,15 +92,16 @@ public class PaymentService {
                     Timestamp currentSqlTimestamp = new Timestamp(System.currentTimeMillis());
                     new_payment.setCreatedAt(currentSqlTimestamp);
                     new_payment.setModifiedAt(currentSqlTimestamp);
+                    generateOrderMessage(new_payment, user_id);
                     return repository.save(new_payment);
                 }
                 else {
-                    generateErrorMessage("received_wrong_business_paypal_payment");
+                    generateErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, user_id);
                     throw new Exception();
                 }
             }
             else {
-                generateErrorMessage("bad_ipn_error");
+                generateErrorMessage("bad_ipn_error", paypal_ipn, user_id);
                 throw new Exception();
             }
         }
@@ -117,20 +117,32 @@ public class PaymentService {
         return true;
     }
 
-    private void generateErrorMessage(String error_message){
+    private void generateErrorMessage(String error_message, Ipn ipn, Integer userId){
         KafkaValue value = new KafkaValue();
         value.setTimestamp(System.currentTimeMillis());
 
+        value.setBody(new Gson().toJson(ipn));
         /*
-        PSEUDOCODICE
-        value.setBody(Gson().toJson(ipn));
-        value.setParameters("{'User_id'" + userId + "}");
+        String userString = "{\"User_id\":\"" + userId + "\"}";
+        value.setParameters(new Gson().toJson(userString));
          */
-        
+        value.setParameters("{\"User_id\":\"" + userId + "\"}");
+
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
         message.setOrder_paid(error_message);
         sendErrorMessage(new Gson().toJson(message));
+    }
+
+    private void generateOrderMessage(Payment new_payment, Integer userId){
+        KafkaValue value = new KafkaValue();
+        value.setOrderId(new_payment.getOrderId());
+        value.setUserId(new_payment.getUserId());
+        value.setAmountPaid(new_payment.getAmountPayed());
+        KafkaMessage message = new KafkaMessage();
+        message.setValue(value);
+        message.setOrder_paid("order_paid");
+        sendOrderMessage(new Gson().toJson(message));
     }
 
 }
