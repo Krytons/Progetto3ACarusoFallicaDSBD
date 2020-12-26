@@ -1,4 +1,4 @@
-package payment;
+package carusofallica.lab.paymentmanager.data;
 
 //This class is used to recognize received Ipn
 public class Ipn {
