@@ -6,16 +6,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.ConnectException;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -27,9 +25,8 @@ public class Heartbeater {
 
     @Scheduled(fixedDelayString = "${heartbeaterPeriod}")
     public void heartbeat(){
-        System.out.println("LA BAMBAAAAAAAAAAAA");
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/ping";
+        String url = "http://192.168.1.19:8080/ping";
         HeartBeatBody jsonBody = new HeartBeatBody();
         jsonBody.setService("paymentService");
         jsonBody.setServiceStatus("up");
@@ -47,12 +44,10 @@ public class Heartbeater {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
         HttpEntity<String> entity = new HttpEntity<String>(new Gson().toJson(jsonBody),headers);
         try {
             String answer = restTemplate.postForObject(url, entity, String.class);
-            System.out.println("SUUUUCA");
             System.out.println(answer);
         }
         catch (ResourceAccessException e){
