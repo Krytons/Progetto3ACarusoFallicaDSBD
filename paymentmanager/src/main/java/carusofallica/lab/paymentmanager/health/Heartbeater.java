@@ -2,18 +2,24 @@ package carusofallica.lab.paymentmanager.health;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.ConnectException;
+import java.util.Arrays;
 import java.util.List;
 
-@Component
+@Configuration
+@EnableScheduling
 public class Heartbeater {
 
     @Autowired
@@ -21,8 +27,9 @@ public class Heartbeater {
 
     @Scheduled(fixedDelayString = "${heartbeaterPeriod}")
     public void heartbeat(){
+        System.out.println("LA BAMBAAAAAAAAAAAA");
         RestTemplate restTemplate = new RestTemplate();
-        String url = "/ping";
+        String url = "http://localhost:8080/ping";
         HeartBeatBody jsonBody = new HeartBeatBody();
         jsonBody.setService("paymentService");
         jsonBody.setServiceStatus("up");
@@ -36,16 +43,25 @@ public class Heartbeater {
             jsonBody.setDbStatus("up");
         }
 
+        System.out.println(new Gson().toJson(jsonBody));
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
         HttpEntity<String> entity = new HttpEntity<String>(new Gson().toJson(jsonBody),headers);
-        String answer = restTemplate.postForObject(url, entity, String.class);
-        System.out.println(answer);
+        try {
+            String answer = restTemplate.postForObject(url, entity, String.class);
+            System.out.println("SUUUUCA");
+            System.out.println(answer);
+        }
+        catch (ResourceAccessException e){
+            System.out.println("Connection error");
+        }
     }
 
     private int check(){
-        List<Object> results = template.query("select 1 from payment", new SingleColumnRowMapper<>());
+        List<Object> results = template.query("select 1", new SingleColumnRowMapper<>());
         return results.size();
     }
 
