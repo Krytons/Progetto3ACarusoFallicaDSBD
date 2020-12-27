@@ -1,10 +1,10 @@
 package carusofallica.lab.paymentmanager.controller;
 
+import carusofallica.lab.paymentmanager.data.Ipn;
 import carusofallica.lab.paymentmanager.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import payment.Ipn;
 import payment.Payment;
 
 import java.sql.Timestamp;

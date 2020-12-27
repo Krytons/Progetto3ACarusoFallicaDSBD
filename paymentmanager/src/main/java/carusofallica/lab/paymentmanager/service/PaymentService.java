@@ -1,5 +1,6 @@
 package carusofallica.lab.paymentmanager.service;
 
+import carusofallica.lab.paymentmanager.data.Ipn;
 import carusofallica.lab.paymentmanager.data.KafkaMessage;
 import carusofallica.lab.paymentmanager.data.KafkaValue;
 import carusofallica.lab.paymentmanager.data.PaymentRepository;
@@ -11,7 +12,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import payment.Ipn;
 import payment.Payment;
 
 import java.sql.Timestamp;
