@@ -1,6 +1,7 @@
 package carusofallica.lab.paymentmanager.controller;
 
 import carusofallica.lab.paymentmanager.data.Ipn;
+import carusofallica.lab.paymentmanager.data.PaypalIpn;
 import carusofallica.lab.paymentmanager.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +46,13 @@ public class PaymentController {
     ipnFunction(@RequestBody Ipn ipn, @RequestHeader Integer x_userId){
         //TODO: controlla x_userId
         return service.ipn(ipn, x_userId);
+    }
+
+    @PostMapping(path = "/real_ipn")
+    public @ResponseBody Payment
+    ipnRealFunction(@RequestBody PaypalIpn ipn){
+        //TODO: controlla x_userId
+        return service.real_ipn(ipn);
     }
 
 }

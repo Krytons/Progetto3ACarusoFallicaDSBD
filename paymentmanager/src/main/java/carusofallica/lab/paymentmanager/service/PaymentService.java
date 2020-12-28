@@ -1,9 +1,6 @@
 package carusofallica.lab.paymentmanager.service;
 
-import carusofallica.lab.paymentmanager.data.Ipn;
-import carusofallica.lab.paymentmanager.data.KafkaMessage;
-import carusofallica.lab.paymentmanager.data.KafkaValue;
-import carusofallica.lab.paymentmanager.data.PaymentRepository;
+import carusofallica.lab.paymentmanager.data.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,11 +107,54 @@ public class PaymentService {
         }
     }
 
+    public Payment real_ipn(PaypalIpn paypal_ipn){
+        try {
+            if (verify_request()){
+                if (mail.equals(paypal_ipn.getBusiness())){
+                    //Generate payment
+                    Payment new_payment = new Payment();
+                    new_payment.setAmountPayed(paypal_ipn.getMc_gross());
+                    new_payment.setUserId(Integer.parseInt(paypal_ipn.getPayer_id()));
+                    new_payment.setOrderId(paypal_ipn.getInvoice());
+                    generateOrderMessage(new_payment, new_payment.getUserId());
+                    return repository.save(new_payment);
+                }
+                else {
+                    generatePaypalErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                    throw new Exception();
+                }
+            }
+            else {
+                generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                throw new Exception();
+            }
+        }
+        catch (Exception e){
+            if (e instanceof NumberFormatException){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Payer Id format");
+            }
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Ipn");
+        }
+    }
+
     private boolean verify_request(){
         /*
         This function will contain some calls to Paypal to verify the ipn.
          */
         return true;
+    }
+
+    private void generatePaypalErrorMessage(String error_message, PaypalIpn ipn, Integer userId){
+        KafkaValue value = new KafkaValue();
+        value.setTimestamp(System.currentTimeMillis());
+
+        value.setBody(new Gson().toJson(ipn));
+        value.setParameters("{\"User_id\":\"" + userId + "\"}");
+
+        KafkaMessage message = new KafkaMessage();
+        message.setValue(value);
+        message.setOrder_paid(error_message);
+        sendErrorMessage(new Gson().toJson(message));
     }
 
     private void generateErrorMessage(String error_message, Ipn ipn, Integer userId){
