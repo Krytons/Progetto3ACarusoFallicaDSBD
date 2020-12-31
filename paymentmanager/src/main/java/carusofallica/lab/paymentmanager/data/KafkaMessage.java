@@ -5,12 +5,12 @@ public class KafkaMessage {
     private String key;
     private KafkaValue value;
 
-    public String getOrder_paid() {
+    public String getKey() {
         return key;
     }
 
-    public KafkaMessage setOrder_paid(String order_paid) {
-        this.key = order_paid;
+    public KafkaMessage setKey(String key) {
+        this.key = key;
         return this;
     }
 

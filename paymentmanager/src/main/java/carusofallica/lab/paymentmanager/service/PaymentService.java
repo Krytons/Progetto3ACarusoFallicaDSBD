@@ -2,6 +2,7 @@ package carusofallica.lab.paymentmanager.service;
 
 import carusofallica.lab.paymentmanager.data.*;
 import com.google.gson.Gson;
+import org.apache.tomcat.util.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import payment.Payment;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Timestamp;
 
 @Service
@@ -103,15 +107,17 @@ public class PaymentService {
             }
         }
         catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Ipn");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     public Payment real_ipn(PaypalIpn paypal_ipn){
+        System.out.println("Marco bravo pizza formaggio");
         try {
             if (verify_request()){
                 if (mail.equals(paypal_ipn.getBusiness())){
                     //Generate payment
+                    System.out.println("I'm here");
                     Payment new_payment = new Payment();
                     new_payment.setAmountPayed(paypal_ipn.getMc_gross());
                     new_payment.setUserId(Integer.parseInt(paypal_ipn.getPayer_id()));
@@ -130,6 +136,7 @@ public class PaymentService {
             }
         }
         catch (Exception e){
+            System.out.println("I'm here: ERROR");
             if (e instanceof NumberFormatException){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Payer Id format");
             }
@@ -145,7 +152,7 @@ public class PaymentService {
     }
 
     private void generatePaypalErrorMessage(String error_message, PaypalIpn ipn, Integer userId){
-        KafkaValue value = new KafkaValue();
+        KafkaErrorValue value = new KafkaErrorValue();
         value.setTimestamp(System.currentTimeMillis());
 
         value.setBody(new Gson().toJson(ipn));
@@ -153,12 +160,12 @@ public class PaymentService {
 
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
-        message.setOrder_paid(error_message);
+        message.setKey(error_message);
         sendErrorMessage(new Gson().toJson(message));
     }
 
     private void generateErrorMessage(String error_message, Ipn ipn, Integer userId){
-        KafkaValue value = new KafkaValue();
+        KafkaErrorValue value = new KafkaErrorValue();
         value.setTimestamp(System.currentTimeMillis());
 
         value.setBody(new Gson().toJson(ipn));
@@ -170,18 +177,18 @@ public class PaymentService {
 
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
-        message.setOrder_paid(error_message);
+        message.setKey(error_message);
         sendErrorMessage(new Gson().toJson(message));
     }
 
     private void generateOrderMessage(Payment new_payment, Integer userId){
-        KafkaValue value = new KafkaValue();
+        KafkaOrderValue value = new KafkaOrderValue();
         value.setOrderId(new_payment.getOrderId());
         value.setUserId(new_payment.getUserId());
         value.setAmountPaid(new_payment.getAmountPayed());
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
-        message.setOrder_paid("order_paid");
+        message.setKey("order_paid");
         sendOrderMessage(new Gson().toJson(message));
     }
 
