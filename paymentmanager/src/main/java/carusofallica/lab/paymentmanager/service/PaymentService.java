@@ -82,32 +82,27 @@ public class PaymentService {
     }
 
     public Payment ipn(Ipn paypal_ipn, Integer user_id){
-        try {
-            if (verify_request()){
-                if (mail.equals(paypal_ipn.getBusiness())){
-                    //Generate payment
-                    Payment new_payment = new Payment();
-                    new_payment.setAmountPayed(paypal_ipn.getMc_gross());
-                    new_payment.setUserId(paypal_ipn.getItem_id());
-                    new_payment.setOrderId(paypal_ipn.getInvoice());
-                    Timestamp currentSqlTimestamp = new Timestamp(System.currentTimeMillis());
-                    new_payment.setCreatedAt(currentSqlTimestamp);
-                    new_payment.setModifiedAt(currentSqlTimestamp);
-                    generateOrderMessage(new_payment, user_id);
-                    return repository.save(new_payment);
-                }
-                else {
-                    generateErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, user_id);
-                    throw new Exception();
-                }
+        if (verify_request()){
+            if (mail.equals(paypal_ipn.getBusiness())){
+                //Generate payment
+                Payment new_payment = new Payment();
+                new_payment.setAmountPayed(paypal_ipn.getMc_gross());
+                new_payment.setUserId(paypal_ipn.getItem_id());
+                new_payment.setOrderId(paypal_ipn.getInvoice());
+                Timestamp currentSqlTimestamp = new Timestamp(System.currentTimeMillis());
+                new_payment.setCreatedAt(currentSqlTimestamp);
+                new_payment.setModifiedAt(currentSqlTimestamp);
+                generateOrderMessage(new_payment, user_id);
+                return repository.save(new_payment);
             }
             else {
-                generateErrorMessage("bad_ipn_error", paypal_ipn, user_id);
-                throw new Exception();
+                generateErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, user_id);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "received_wrong_business_paypal_payment");
             }
         }
-        catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        else {
+            generateErrorMessage("bad_ipn_error", paypal_ipn, user_id);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "bad_ipn_error");
         }
     }
 
@@ -169,10 +164,6 @@ public class PaymentService {
         value.setTimestamp(System.currentTimeMillis());
 
         value.setBody(new Gson().toJson(ipn));
-        /*
-        String userString = "{\"User_id\":\"" + userId + "\"}";
-        value.setParameters(new Gson().toJson(userString));
-         */
         value.setParameters("{\"User_id\":\"" + userId + "\"}");
 
         KafkaMessage message = new KafkaMessage();
