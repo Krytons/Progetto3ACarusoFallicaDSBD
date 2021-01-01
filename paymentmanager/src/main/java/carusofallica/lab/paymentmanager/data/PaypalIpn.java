@@ -1,5 +1,8 @@
 package carusofallica.lab.paymentmanager.data;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 public class PaypalIpn {
 
     private String payment_type;
@@ -361,5 +364,46 @@ public class PaypalIpn {
     public PaypalIpn setVerify_sign(String verify_sign) {
         this.verify_sign = verify_sign;
         return this;
+    }
+
+    public MultiValueMap<String, String> convert_to_map(PaypalIpn ipn){
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        map.add("payment_type", ipn.getPayment_type());
+        map.add("payment_date", ipn.getPayment_date());
+        map.add("address_status", ipn.getAddress_status());
+        map.add("payer_status", ipn.getPayer_status());
+        map.add("first_name", ipn.getFirst_name());
+        map.add("last_name", ipn.getLast_name());
+        map.add("payer_email", ipn.getPayer_email());
+        map.add("payer_id", ipn.getPayer_id());
+        map.add("address_name", ipn.getAddress_name());
+        map.add("address_country", ipn.getAddress_country());
+        map.add("address_country_code", ipn.getAddress_country_code());
+        map.add("address_zip", ipn.getAddress_zip());
+        map.add("address_state", ipn.getAddress_state());
+        map.add("address_city", ipn.getAddress_city());
+        map.add("address_street", ipn.getAddress_street());
+        map.add("business", ipn.getBusiness());
+        map.add("receiver_email", ipn.getReceiver_email());
+        map.add("receiver_id", ipn.getReceiver_id());
+        map.add("residence_country", ipn.getResidence_country());
+        map.add("item_name", ipn.getItem_name());
+        map.add("item_number", ipn.getItem_number());
+        map.add("quantity", ipn.getQuantity().toString());
+        map.add("shipping", ipn.getShipping());
+        map.add("tax", ipn.getTax());
+        map.add("mc_currency", ipn.getMc_currency());
+        map.add("mc_fee", String.valueOf(ipn.getMc_fee()));
+        map.add("mc_gross", String.valueOf(ipn.getMc_gross()));
+        map.add("mc_gross_1", String.valueOf(ipn.getMc_gross_1()));
+        map.add("txn_type", ipn.getTxn_type());
+        map.add("txn_id", ipn.getTxn_id());
+        map.add("notify_version", String.valueOf(ipn.getNotify_version()));
+        map.add("custom", ipn.getCustom());
+        map.add("invoice", ipn.getInvoice());
+        map.add("test_ipn", ipn.getTest_ipn().toString());
+        map.add("verify_sign", ipn.getVerify_sign());
+        map.add("verify_sign", ipn.getVerify_sign());
+        return map;
     }
 }

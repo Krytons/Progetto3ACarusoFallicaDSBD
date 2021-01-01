@@ -5,16 +5,20 @@ import com.google.gson.Gson;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import payment.Payment;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 
 @Service
@@ -85,15 +89,21 @@ public class PaymentService {
         if (verify_request()){
             if (mail.equals(paypal_ipn.getBusiness())){
                 //Generate payment
-                Payment new_payment = new Payment();
-                new_payment.setAmountPayed(paypal_ipn.getMc_gross());
-                new_payment.setUserId(paypal_ipn.getItem_id());
-                new_payment.setOrderId(paypal_ipn.getInvoice());
-                Timestamp currentSqlTimestamp = new Timestamp(System.currentTimeMillis());
-                new_payment.setCreatedAt(currentSqlTimestamp);
-                new_payment.setModifiedAt(currentSqlTimestamp);
-                generateOrderMessage(new_payment, user_id);
-                return repository.save(new_payment);
+                try {
+                    Payment new_payment = new Payment();
+                    new_payment.setAmountPayed(paypal_ipn.getMc_gross());
+                    new_payment.setUserId(paypal_ipn.getItem_id());
+                    new_payment.setOrderId(paypal_ipn.getInvoice());
+                    Timestamp currentSqlTimestamp = new Timestamp(System.currentTimeMillis());
+                    new_payment.setCreatedAt(currentSqlTimestamp);
+                    new_payment.setModifiedAt(currentSqlTimestamp);
+                    generateOrderMessage(new_payment, user_id);
+                    return repository.save(new_payment);
+                }
+                catch (NumberFormatException e){
+                    generateErrorMessage("bad_ipn_error", paypal_ipn, user_id);
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid_ipn_field");
+                }
             }
             else {
                 generateErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, user_id);
@@ -108,11 +118,11 @@ public class PaymentService {
 
     public Payment real_ipn(PaypalIpn paypal_ipn){
         System.out.println("Marco bravo pizza formaggio");
-        try {
-            if (verify_request()){
-                if (mail.equals(paypal_ipn.getBusiness())){
-                    //Generate payment
-                    System.out.println("I'm here");
+        if (verify_paypal_request(paypal_ipn)){
+            if (mail.equals(paypal_ipn.getBusiness())){
+                //Generate payment
+                System.out.println("I'm here");
+                try {
                     Payment new_payment = new Payment();
                     new_payment.setAmountPayed(paypal_ipn.getMc_gross());
                     new_payment.setUserId(Integer.parseInt(paypal_ipn.getPayer_id()));
@@ -120,30 +130,46 @@ public class PaymentService {
                     generateOrderMessage(new_payment, new_payment.getUserId());
                     return repository.save(new_payment);
                 }
-                else {
-                    generatePaypalErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
-                    throw new Exception();
+                catch (NumberFormatException e){
+                    generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid_ipn_field");
                 }
             }
             else {
-                generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
-                throw new Exception();
+                generatePaypalErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "received_wrong_business_paypal_payment");
             }
         }
-        catch (Exception e){
-            System.out.println("I'm here: ERROR");
-            if (e instanceof NumberFormatException){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Payer Id format");
+        else {
+            try {
+                generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "bad_ipn_error");
             }
-            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Ipn");
+            catch (NumberFormatException e){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid_ipn_payer_id");
+            }
         }
     }
 
     private boolean verify_request(){
-        /*
-        This function will contain some calls to Paypal to verify the ipn.
-         */
         return true;
+    }
+
+    private boolean verify_paypal_request(PaypalIpn paypal_ipn){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr&cmd=_notify-validate";
+        try {
+            MultiValueMap<String, String> map = paypal_ipn.convert_to_map(paypal_ipn);
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map,headers);
+            String answer = restTemplate.postForObject(url, entity, String.class);
+            System.out.println(answer);
+            return answer == "VERIFIED";
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
     private void generatePaypalErrorMessage(String error_message, PaypalIpn ipn, Integer userId){

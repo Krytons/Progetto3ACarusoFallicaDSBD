@@ -1,7 +1,5 @@
 package carusofallica.lab.paymentmanager.data;
 
-import java.sql.Timestamp;
-
 public class KafkaValue {
 
     private long timestamp;
