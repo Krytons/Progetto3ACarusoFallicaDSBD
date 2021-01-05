@@ -8,6 +8,7 @@ x-common-variables: &common-variables
   DATASOURCE_PORT: ${DB_PORT}
   PAYPAL_BUSINESS_MAIL: ${MY_PAYPAL_ACCOUNT}
   HEARTBEAT_PERIOD: ${HEART_BEAT_PERIOD}
+  HEARTBEAT_URL: ${HEART_BEAT_URL_PING}
 
 services:
   ### MY SQL ###

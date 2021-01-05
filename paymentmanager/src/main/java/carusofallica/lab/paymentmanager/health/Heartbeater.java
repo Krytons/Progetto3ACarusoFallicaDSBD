@@ -2,6 +2,7 @@ package carusofallica.lab.paymentmanager.health;
 
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,10 +23,12 @@ public class Heartbeater {
     @Autowired
     JdbcTemplate template;
 
+    @Value("${heartbeaterUrl}")
+    private String url;
+
     @Scheduled(fixedDelayString = "${heartbeaterPeriod}")
     public void heartbeat(){
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://192.168.1.19:8080/ping";
         HeartBeatBody jsonBody = new HeartBeatBody();
         jsonBody.setService("paymentService");
         jsonBody.setServiceStatus("up");
