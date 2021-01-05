@@ -14,7 +14,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import payment.Payment;
@@ -117,11 +116,9 @@ public class PaymentService {
     }
 
     public Payment real_ipn(PaypalIpn paypal_ipn){
-        System.out.println("Marco bravo pizza formaggio");
         if (verify_paypal_request(paypal_ipn)){
             if (mail.equals(paypal_ipn.getBusiness())){
                 //Generate payment
-                System.out.println("I'm here");
                 try {
                     Payment new_payment = new Payment();
                     new_payment.setAmountPayed(paypal_ipn.getMc_gross());
@@ -159,10 +156,10 @@ public class PaymentService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         RestTemplate restTemplate = new RestTemplate();
-        String url = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr&cmd=_notify-validate";
+        String url = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate";
         try {
             MultiValueMap<String, String> map = paypal_ipn.convert_to_map(paypal_ipn);
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map,headers);
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map,headers);
             String answer = restTemplate.postForObject(url, entity, String.class);
             System.out.println(answer);
             return answer == "VERIFIED";

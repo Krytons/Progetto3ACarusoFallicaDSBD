@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -51,7 +50,7 @@ public class Heartbeater {
             System.out.println(answer);
         }
         catch (ResourceAccessException e){
-            System.out.println("Connection error");
+            System.out.println("Connection error to /ping");
         }
     }
 
