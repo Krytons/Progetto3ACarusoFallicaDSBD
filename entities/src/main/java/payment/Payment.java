@@ -3,10 +3,7 @@ package payment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -21,6 +18,7 @@ public class Payment {
     @NotNull(message = "A payment must have an user_id value")
     private Integer userId;
 
+    @Column(unique=true)
     @NotNull(message = "A payment must have an order_id value")
     private String orderId;
 

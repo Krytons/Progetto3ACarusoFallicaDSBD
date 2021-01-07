@@ -4,6 +4,7 @@ import carusofallica.lab.paymentmanager.data.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import payment.Payment;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 
 @Service
@@ -37,7 +39,7 @@ public class PaymentService {
     @Value("${kafkaTopicErrors}")
     private String topicErrors;
 
-    //***** DA TEST *****
+    /*
     public Iterable<Payment> getAllPayment(){
         return repository.findAll();
     }
@@ -58,6 +60,7 @@ public class PaymentService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid insert");
         }
     }
+     */
 
 
     //***** RICHIESTE DAL PROGETTO *****
@@ -113,31 +116,32 @@ public class PaymentService {
         }
     }
 
-    public Payment real_ipn(PaypalIpn paypal_ipn){
-        if (verify_paypal_request(paypal_ipn)){
-            if (mail.equals(paypal_ipn.getBusiness())){
+    public Payment real_ipn(HttpEntity<String> httpEntity, PaypalIpn paypal_ipn){
+        if (verify_paypal_request(httpEntity)){
+            if (mail.equals(paypal_ipn.getReceiver_email())){
                 //Generate payment
                 try {
                     Payment new_payment = new Payment();
                     new_payment.setAmountPayed(paypal_ipn.getMc_gross());
-                    new_payment.setUserId(Integer.parseInt(paypal_ipn.getPayer_id()));
+                    new_payment.setUserId(Integer.parseInt(paypal_ipn.getOption_name1()));
                     new_payment.setOrderId(paypal_ipn.getInvoice());
                     generateOrderMessage(new_payment, new_payment.getUserId());
+                    System.out.println("All good");
                     return repository.save(new_payment);
                 }
                 catch (NumberFormatException e){
-                    generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                    generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getOption_name1()));
                     throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid_ipn_field");
                 }
             }
             else {
-                generatePaypalErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                generatePaypalErrorMessage("received_wrong_business_paypal_payment", paypal_ipn, Integer.parseInt(paypal_ipn.getOption_name1()));
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "received_wrong_business_paypal_payment");
             }
         }
         else {
             try {
-                generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getPayer_id()));
+                generatePaypalErrorMessage("bad_ipn_error", paypal_ipn, Integer.parseInt(paypal_ipn.getOption_name1()));
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "bad_ipn_error");
             }
             catch (NumberFormatException e){
@@ -150,17 +154,15 @@ public class PaymentService {
         return true;
     }
 
-    private boolean verify_paypal_request(PaypalIpn paypal_ipn){
+    private boolean verify_paypal_request(HttpEntity<String> httpEntity){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         RestTemplate restTemplate = new RestTemplate();
         String url = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate";
         try {
-            MultiValueMap<String, String> map = paypal_ipn.convert_to_map(paypal_ipn);
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map,headers);
-            String answer = restTemplate.postForObject(url, entity, String.class);
+            String answer = restTemplate.postForObject(url, httpEntity.getBody(), String.class);
             System.out.println(answer);
-            return answer == "VERIFIED";
+            return answer.equals("VERIFIED");
         }
         catch (Exception e){
             return false;

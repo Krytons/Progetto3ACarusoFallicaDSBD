@@ -5,6 +5,7 @@ import org.springframework.util.MultiValueMap;
 
 public class PaypalIpn {
 
+    private String option_name1;
     private String payment_type;
     private String payment_date;
     private String payment_status;
@@ -41,6 +42,15 @@ public class PaypalIpn {
     private String invoice;
     private Integer test_ipn;
     private String verify_sign;
+
+    public String getOption_name1() {
+        return option_name1;
+    }
+
+    public PaypalIpn setOption_name1(String option_name1) {
+        this.option_name1 = option_name1;
+        return this;
+    }
 
     public String getPayment_type() {
         return payment_type;
@@ -366,6 +376,15 @@ public class PaypalIpn {
         return this;
     }
 
+    /*
+    public String convert_to_string(PaypalIpn ipn){
+        String return_string = "";
+        return_string = "https://ipnpb.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate&" + "mc_gross=" + ipn.getMc_gross() + "&invoice=" + ipn.getInvoice() + "&address_status=" + ipn.getAddress_status() + "&payer_id=" + ipn.getPayer_id() + "&address_street=" + ipn.getAddress_street() + "&payment_date=" + ipn.getPayment_date() + "&payment_status=" + ipn.getPayment_status() + "&charset=" + "UTF-8" + "&address_zip=" + ipn.getAddress_zip() + "&first_name=" + ipn.getFirst_name() + "&address_country_code="
+        + ipn.getAddress_country_code() + "&address_name=" + ipn.getAddress_name() + "&notify_version=" + ipn.getNotify_version() + "&payer_status=" + ipn.getPayer_status() + "&address_country=" + ipn.getAddress_country() + "&address_city=" + ipn.getAddress_city() + "&quantity=" + ipn.getQuantity() + "&verify_sign=" + ipn.getVerify_sign() + "&payer_email=" + ipn.getPayer_email() + "&txn_id=" + ipn.getTxn_id() + "&payment_type=" + ipn.getPayment_type() +
+        "&last_name=" + ipn.getPayment_type() + "&address_state=" + ipn.getAddress_state() + "&receiver_email=" + ipn.getReceiver_email() + "&txn_type=" + ipn.getTxn_type() + "&item_name=" + ipn.getItem_name() + "&mc_currency=" + ipn.getMc_currency() + "&item_number=" + ipn.getItem_number() + "&residence_country=" + ipn.getResidence_country() + "&test_ipn=" + ipn.getTest_ipn() + "&shipping_method=" + ipn.getShipping();
+        return return_string;
+    }
+
     public MultiValueMap<String, String> convert_to_map(PaypalIpn ipn){
         MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
         map.add("payment_type", ipn.getPayment_type());
@@ -406,4 +425,5 @@ public class PaypalIpn {
         map.add("verify_sign", ipn.getVerify_sign());
         return map;
     }
+     */
 }
