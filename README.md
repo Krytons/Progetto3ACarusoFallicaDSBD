@@ -18,16 +18,27 @@ In order to develop this project we have used the following elements:
 
 ## 2. POJO classes
 In order to easily generate messages and JSON data, we've used the following POJO classes:
-- **Kafka Message & Kafka Value**:
+- **Kafka Message & Kafka Value:**
+  In our project we use Kafka to publish different kind of information into specific topics.
+  All the messages have the same base structure made of a "message key", and a "message body", so we've created a base class for the message body called
+  "KafkaValue" that is specialized into different kind of Values:
+  * **KafkaErrorValue:** Value used for the messages published into "logging" topic, with a proper error key.
+  * **KafkaHttpValue:** Value used for the messages published into "logging" topic, with key "http_errors".
+  * **KafkaOrderValue:** Value used for the messages published into "orders" topic, with key "order_paid". 
   ![KafkaMessages](./diagrams/kafkamessages.svg)
   
 
-- **Paypal Ipn**:
-
+- **Ipn & PaypalIpn:**
+  In our project we have two different kind of services to handle ipn:
+  * **Simulated Ipn:** this service is used to simulate the reception of an Ipn. 
+  This service will use Ipn POJO class, that contains only the most important attributes of an Ipn.
+    ![KafkaMessages](./diagrams/ipn.svg)
+  * **Real Ipn:** this service is used to receive a real Ipn, using Paypal sandbox service.
+  For this we've used PaypalIpn POJO class, that contains all the attributes that a real Ipn could have.
   
 
-- **Return Message**:
-  
+- **Return Message:**
+  ![KafkaMessages](./diagrams/kafkamessages.svg)
 
     
 ---
