@@ -49,7 +49,7 @@ public class HttpExceptionController {
         }
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
-        message.setKey("http_errors");
+        message.setKey("http_error");
         kafkaTemplate.send(topicErrors, (new Gson().toJson(message)));
         return new ResponseEntity<Object>(new ReturnMessage(exception.getStatus().value(), exception.getStatus().getReasonPhrase(), exception.getReason(), request.getRequestURI()), new HttpHeaders(), exception.getStatus());
     }
@@ -65,7 +65,7 @@ public class HttpExceptionController {
         value.setError("404");
         KafkaMessage message = new KafkaMessage();
         message.setValue(value);
-        message.setKey("http_errors");
+        message.setKey("http_error");
         kafkaTemplate.send(topicErrors, (new Gson().toJson(message)));
         //Response
         response.sendError(HttpServletResponse.SC_NOT_FOUND);

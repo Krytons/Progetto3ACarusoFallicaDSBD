@@ -53,7 +53,7 @@ public class PaymentController {
 
     @PostMapping(path = "/ipn")
     public @ResponseBody Payment
-    ipnFunction(@Valid @RequestBody Ipn ipn, @RequestHeader Integer x_userId, HttpServletRequest request){
+    ipnFunction(@Valid @RequestBody Ipn ipn, @RequestHeader Integer x_userId){
         //TODO: controlla x_userId
         try {
             return service.ipn(ipn, x_userId);
