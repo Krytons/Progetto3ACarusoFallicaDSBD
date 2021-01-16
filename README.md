@@ -50,6 +50,7 @@ In order to easily generate messages and JSON data, we've used the following POJ
   * **KafkaErrorValue:** value used for the messages published into "logging" topic, with a proper error key.
   * **KafkaHttpValue:** value used for the messages published into "logging" topic, with key "http_errors".
   * **KafkaOrderValue:** value used for the messages published into "orders" topic, with key "order_paid".
+  
   ![KafkaMessages](./diagrams/kafkamessages.svg)
   
 
@@ -57,6 +58,7 @@ In order to easily generate messages and JSON data, we've used the following POJ
   in our project we have two different kind of services to handle ipn:
   * **Simulated Ipn:** this service is used to simulate the reception of an Ipn. 
   This service will use Ipn POJO class, that contains only the most important attributes of an Ipn.
+    
     ![KafkaMessages](./diagrams/ipn.svg)
   * **Real Ipn:** this service is used to receive a real Ipn, using Paypal sandbox service.
   For this we've used PaypalIpn POJO class, that contains all the attributes that a real Ipn could have.
@@ -81,7 +83,22 @@ Our microservice uses Kafka messaging system to publish into two topics, differe
 
 Information published by our microservice are ready to be consumed by other components that use Kafka.
 
+In our projects we used the interface "Configuration" to implements the following classes:
+- **KafkaProducerConfig:** class used to create our topics and to expose a "KafkaTemplate" that is used by the payment service to publish our microservice information.
+- **Heartbeater:** class that implements hear-beat mode ping strategy.
+
+Our heartbeater class repeats periodically the function "heartbeat()", that will check our DB connection using a simple select query, and then makes a POST request at `HEART_BEAT_URL_PING` 
+with the following body:
+```JSON
+{
+  "service": "serviceName",
+  "serviceStatus": "up|down",
+  "dbStatus": "up|down"
+}
+```
+
 The following UML diagrams shows the interfaces used for our "Heartbeater" and "KafkaProducerConfig" classes:
+
 ![Kafka](./diagrams/kafka.svg)
 
 ---
