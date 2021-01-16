@@ -27,7 +27,7 @@ In order to develop this project we have used the following elements:
     DB_ROOT_PASSWORD = #Your DB root password
     DB_HOST = #Your DB host name
     DB_PORT = #Your DB port number
-    PAYMENT_MANAGER_HOST = #Host name of payment microservice, we used "paymentmanager" for that
+    PAYMENT_MANAGER_HOST = #Host name of payment microservice, we used "paymentmanager"
     PAYMENT_MANAGER_PORT = #Payment microservice port
     MY_PAYPAL_ACCOUNT = #Receiver business mail, we used "merchange@mydomain.tld"
     HEART_BEAT_PERIOD = #Period of the heartbeating routine expressed in ms
@@ -64,6 +64,7 @@ In order to easily generate messages and JSON data, we've used the following POJ
 
 - **Return Message:**
   When a http error is generated, the HttpExceptionController captures it and generates a return message using this POJO class.
+  
   ![KafkaMessages](diagrams/http.svg)
 
     
@@ -82,6 +83,7 @@ Information published by our microservice are ready to be consumed by other comp
 
 The following UML diagrams shows the interfaces used for our "Heartbeater" and "KafkaProducerConfig" classes:
 ![Kafka](./diagrams/kafka.svg)
+
 ---
 
 ## 4. Payment controller & Payment service
