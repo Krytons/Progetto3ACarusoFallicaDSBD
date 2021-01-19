@@ -13,6 +13,7 @@ In order to develop this project we have used the following elements:
 - **MySQL database:** relational database, used inside a Docker container 
 - **Kafka messaging system:** open source distributed event streaming platform, used to publish into a specific topic errors and critical data information  
 - **Spring framework:** an open source framework used to develop java based applications.
+- **Apache Maven:** a project management and comprehension tool.
 
 ### How to test our microservice
 - **Start docker:**
@@ -104,6 +105,63 @@ The following UML diagrams shows the interfaces used for our "Heartbeater" and "
 ---
 
 ## 4. Payment controller & Payment service
+As requested, our Payment Controller class exposes the following endpoints:
+- `POST payment/ipn`: this HTTP endpoint is used to simulate a payment notification coming from Paypal system.
+  
+  The request must contain and Header called "X-User-ID" that contains an userId which is used by the Paypal Service to correctly generate a Payment entry. 
+  
+  In this particular scenario, our Payment Service class requires a "simulated ipn" argument to generate a Payment entry: the verify function will always return a "true" value.
+
+  In order to easily check if the body of the request has everything that is needed to generate a Payment entry, we created a POJO class called "Ipn": the following JSON shows a correct request body according to the Ipn class:
+  ``` JSON
+  {
+    "invoice":"asjldfbksdag224",
+    "item_id":13,
+    "mc_gross":124.12,
+    "business":"merchange@mydomain.tld"
+  } 
+  ```
+  
+  If the Payment entry is successfully created, all the information about the payment will be returned as shown below:
+  ``` JSON  
+  {
+    "id": 27,
+    "userId": 13,
+    "orderId": "asjldfbksdag224",
+    "amountPayed": 124.12,
+    "createdAt": "2021-01-19T21:54:01.021+00:00",
+    "modifiedAt": "2021-01-19T21:54:01.021+00:00"
+  }
+  ```
+- `POST payment/real_ipn`: we introduced this HTTP endpoint to use the real Paypal system to receive a payment notification.
+  
+  As the previous endpoint, the request must contain an UserId: in this particular scenario the request is coming from Paypal, so we can't receive this value with the Header called "X-User-ID".
+  
+  To avoid this problem, the payment url must be created with an optional value `on0` used to contain the userId.
+  
+  The following JSON structure can be used to generate a payment URL:
+  ``` JSON
+   params = {
+    'business': 'https://www.sandbox.paypal.com/cgi-bin/webscr',
+    'cmd': '_xclick',
+    'invoice': my_order_id,
+    'amount': my_price,
+    'item_name': 'my_order_string_reference',
+    'item_number': 'order_user_id',
+    'quantity': 1,
+    'currency_code': 'EUR',
+    'notify_url': my_ngrok_url + "/payment/real_ipn",
+    'on0': '0'
+  }
+  ```
+
+  In this scenario, our Payment Service class receives a "Paypal Ipn" from Paypal, and in this case the verify function will make a POST request to paypal to verify the Ipn.
+
+  If the received Ipn is valid, a Payment entry will be created and all the information about it will be returned like the previous endpoint.
+  
+
+The following UML diagram shows the interfaces used for our "PaymentController" and "PaymentService" classes:
+
 ![Controller](./diagrams/controller.svg)
 ---
 
