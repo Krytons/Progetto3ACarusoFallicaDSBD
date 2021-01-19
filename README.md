@@ -1,8 +1,8 @@
 # Project "3A" Caruso&Fallica DSBD 2020
 
-<p align="center" style="font-size: 18px">
+<p align="center" style="font-size: 24px">
   <span> English </span> |
-  <a href="https://github.com/Krytons/Progetto3ACarusoFallicaDSBD">Italian</a>
+  <a href="https://github.com/Krytons/Progetto3ACarusoFallicaDSBD/blob/main/README.it.md">Italiano</a>
 </p>
 
 ## Project for Distributed Systems Big Data 2020
