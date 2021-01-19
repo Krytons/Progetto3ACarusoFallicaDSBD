@@ -112,9 +112,9 @@ The following UML diagrams shows the interfaces used for our "Heartbeater" and "
 
 ## 4. Payment controller & Payment service
 As requested, our Payment Controller class exposes the following endpoints:
-- `POST payment/ipn`: this HTTP endpoint is used to simulate a payment notification coming from Paypal system.
+- `POST payment/ipn`:this HTTP endpoint is used to simulate a payment notification coming from Paypal system.
   
-  The request must contain and Header called "X-User-ID" that contains an userId which is used by the Paypal Service to correctly generate a Payment entry. 
+  The request must contain a Header called "X-User-ID" that contains an userId which is used by the Paypal Service to correctly generate a Payment entry. 
   
   In this particular scenario, our Payment Service class requires a "simulated ipn" argument to generate a Payment entry: the verify function will always return a "true" value.
 
@@ -139,7 +139,7 @@ As requested, our Payment Controller class exposes the following endpoints:
     "modifiedAt": "2021-01-19T21:54:01.021+00:00"
   }
   ```
-- `POST payment/real_ipn`: we introduced this HTTP endpoint to use the real Paypal system to receive a payment notification.
+- `POST payment/real_ipn`:we introduced this HTTP endpoint to use the real Paypal system to receive a payment notification.
   
   As the previous endpoint, the request must contain an UserId: in this particular scenario the request is coming from Paypal, so we can't receive this value with the Header called "X-User-ID".
   
@@ -148,15 +148,15 @@ As requested, our Payment Controller class exposes the following endpoints:
   The following JSON structure can be used to generate a payment URL:
   ``` JSON
    params = {
-    "business": 'https://www.sandbox.paypal.com/cgi-bin/webscr',
+    "business": "merchange@mydomain.tld",
     "cmd": "_xclick",
-    "invoice": "axd242j",
-    "amount": "12.55",
+    "invoice": 4,
+    "amount": 12.55,
     "item_name": "my_order_string_reference",
-    "item_number": "order_user_id",
+    "item_number": 3,
     "quantity": 1,
     "currency_code": "EUR",
-    "notify_url": my_ngrok_url + "/payment/real_ipn",
+    "notify_url": "http://8acfc9049ed2.ngrok.io/payment/real_ipn",
     "on0": "1"
   }
   ```
@@ -165,7 +165,25 @@ As requested, our Payment Controller class exposes the following endpoints:
 
   If the received Ipn is valid, a Payment entry will be created and all the information about it will be returned like the previous endpoint.
   
-- `GET payment/real_ipn`:
+- `GET payment//transactions?fromTimestamp=unixTimestamp1&endTimestamp=unixTimestamp2`:this HTTP endpoint is used to obtain all the transactions made between fromTimestamp and endTimestamp values (expressed in unixTime).
+  
+  The request must contain a Header called "X-User-ID": if the value is 0 all the transactions between fromTimestamp and endTimestamp will be returned, if this value is different from 0 the transactions returned belong to the user of the given identification.
+
+  Payments that meet the requirements of the request will be returned as shown below:
+  ``` JSON
+  [
+    {
+        "id": 1,
+        "userId": 0,
+        "orderId": "3",
+        "amountPayed": 20.0,
+        "createdAt": "2021-01-07T23:24:57.182+00:00",
+        "modifiedAt": "2021-01-07T23:24:57.182+00:00"
+    }
+  ] 
+  ```
+  
+
 
 The following UML diagram shows the interfaces used for our "PaymentController" and "PaymentService" classes:
 
