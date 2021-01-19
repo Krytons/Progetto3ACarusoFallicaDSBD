@@ -1,4 +1,10 @@
 # Project "3A" Caruso&Fallica DSBD 2020
+
+<p align="center" style="font-size: 18px">
+  <span> English </span> |
+  <a href="https://github.com/Krytons/Progetto3ACarusoFallicaDSBD">Italian</a>
+</p>
+
 ## Project for Distributed Systems Big Data 2020
 ### Made by:
 - **Caruso Bartolomeo**
@@ -142,16 +148,16 @@ As requested, our Payment Controller class exposes the following endpoints:
   The following JSON structure can be used to generate a payment URL:
   ``` JSON
    params = {
-    'business': 'https://www.sandbox.paypal.com/cgi-bin/webscr',
-    'cmd': '_xclick',
-    'invoice': my_order_id,
-    'amount': my_price,
-    'item_name': 'my_order_string_reference',
-    'item_number': 'order_user_id',
-    'quantity': 1,
-    'currency_code': 'EUR',
-    'notify_url': my_ngrok_url + "/payment/real_ipn",
-    'on0': '0'
+    "business": 'https://www.sandbox.paypal.com/cgi-bin/webscr',
+    "cmd": "_xclick",
+    "invoice": "axd242j",
+    "amount": "12.55",
+    "item_name": "my_order_string_reference",
+    "item_number": "order_user_id",
+    "quantity": 1,
+    "currency_code": "EUR",
+    "notify_url": my_ngrok_url + "/payment/real_ipn",
+    "on0": "1"
   }
   ```
 
@@ -159,6 +165,7 @@ As requested, our Payment Controller class exposes the following endpoints:
 
   If the received Ipn is valid, a Payment entry will be created and all the information about it will be returned like the previous endpoint.
   
+- `GET payment/real_ipn`:
 
 The following UML diagram shows the interfaces used for our "PaymentController" and "PaymentService" classes:
 
