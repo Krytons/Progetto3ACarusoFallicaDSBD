@@ -112,7 +112,7 @@ The following UML diagrams shows the interfaces used for our "Heartbeater" and "
 
 ## 4. Payment controller & Payment service
 As requested, our Payment Controller class exposes the following endpoints:
-- `POST payment/ipn`:this HTTP endpoint is used to simulate a payment notification coming from Paypal system.
+- `POST payment/ipn`: this HTTP endpoint is used to simulate a payment notification coming from Paypal system.
   
   The request must contain a Header called "X-User-ID" that contains an userId which is used by the Paypal Service to correctly generate a Payment entry. 
   
@@ -139,7 +139,7 @@ As requested, our Payment Controller class exposes the following endpoints:
     "modifiedAt": "2021-01-19T21:54:01.021+00:00"
   }
   ```
-- `POST payment/real_ipn`:we introduced this HTTP endpoint to use the real Paypal system to receive a payment notification.
+- `POST payment/real_ipn`: we introduced this HTTP endpoint to use the real Paypal system to receive a payment notification.
   
   As the previous endpoint, the request must contain an UserId: in this particular scenario the request is coming from Paypal, so we can't receive this value with the Header called "X-User-ID".
   
@@ -165,7 +165,7 @@ As requested, our Payment Controller class exposes the following endpoints:
 
   If the received Ipn is valid, a Payment entry will be created and all the information about it will be returned like the previous endpoint.
   
-- `GET payment//transactions?fromTimestamp=unixTimestamp1&endTimestamp=unixTimestamp2`:this HTTP endpoint is used to obtain all the transactions made between fromTimestamp and endTimestamp values (expressed in unixTime).
+- `GET payment//transactions?fromTimestamp=unixTimestamp1&endTimestamp=unixTimestamp2`: this HTTP endpoint is used to obtain all the transactions made between fromTimestamp and endTimestamp values (expressed in unixTime).
   
   The request must contain a Header called "X-User-ID": if the value is 0 all the transactions between fromTimestamp and endTimestamp will be returned, if this value is different from 0 the transactions returned belong to the user of the given identification.
 
@@ -182,8 +182,6 @@ As requested, our Payment Controller class exposes the following endpoints:
     }
   ] 
   ```
-  
-
 
 The following UML diagram shows the interfaces used for our "PaymentController" and "PaymentService" classes:
 
