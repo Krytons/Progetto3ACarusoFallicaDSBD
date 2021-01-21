@@ -160,6 +160,7 @@ As requested, our Payment Controller class exposes the following endpoints:
     "on0": "1"
   }
   ```
+  To correctly generate a Paypal payment URL, our advice is to use the script available at the following link: https://github.com/Krytons/Paypal-URL-generator
 
   In this scenario, our Payment Service class receives a "Paypal Ipn" from Paypal, and in this case the verify function will make a POST request to paypal to verify the Ipn.
 

@@ -13,13 +13,13 @@
 ## 1. Obiettivo del progetto
 Questo progetto mira a creare un microservizio che verrà utilizzato per gestire i pagamenti in una applicazione distribuita di e-commerce.
 
-Gli da noi utilizzati per la realizzazione del progetto sono stati:
+Gli strumenti da noi utilizzati per la realizzazione del progetto sono i seguenti:
 - **Database MySql:** database relazionale utilizzato all’interno di un container Docker
-- **Sistema di messaggistica Kafka:** piattaforma di streaming di eventi distribuita open source, utilizzata per pubblicare in un argomento specifico, errori e informazioni sui dati critici.
+- **Sistema di messaggistica Kafka:** piattaforma di streaming di eventi distribuita open source, utilizzata per pubblicare in un topic specifico, errori e informazioni sui dati critici.
 - **Spring framework:** un framework open source utilizzato per sviluppare applicazioni basate su Java.
 - **Apache Maven:** uno strumento di gestione e comprensione dei progetti.
 
-### Come testare il nostro
+### Come testare il nostro progetto
 - **Avviare Docker:**
   ```bash
     $ docker start
@@ -39,7 +39,7 @@ Gli da noi utilizzati per la realizzazione del progetto sono stati:
     HEART_BEAT_URL_PING = #URL that will be used by the heartbeating routine for the POST request.
   ```
 
-- **Aprire il terminale all'interno del "Progetto3ACarusoFallicaDSBD" ed usare il seguente comando:**
+- **Aprire un terminale all'interno del "Progetto3ACarusoFallicaDSBD" ed usare il seguente comando:**
   ```bash  
   $ docker-compose up -build
   ```
@@ -49,26 +49,26 @@ Gli da noi utilizzati per la realizzazione del progetto sono stati:
 ## 2. Classi POJO
 Per creare in maniera semplice messaggi e file JSON abbiamo utilizzato le seguenti classi POJO:
 - **Kafka Message & Kafka Value:**
-  Nel nostro progetto usiamo Kafka per pubblicare diversi tipi di informazioni in argomenti specifici. 
+  Nel nostro progetto usiamo Kafka per pubblicare diversi tipi di informazioni in topic specifici. 
   Tutti i messaggi hanno la stessa struttura di base composta da un "message key" e un "message body", pertanto abbiamo creato una classe di base per il corpo del messaggio chiamata: "KafkaValue" caratterizzata da un insieme di valori:
-    * **KafkaErrorValue:** valore utilizzato per i messaggi pubblicati nell'argomento "logging", con una corretta           chiave di errore.
-    * **KafkaHttpValue:** valore utilizzato per i messaggi pubblicati nell'argomento "logging", con chiave      "http_errors".
-    * **KafkaOrderValue:** valore utilizzato per i messaggi pubblicati nell'argomento "orders", con chiave "order_paid
+    * **KafkaErrorValue:** valore utilizzato per i messaggi pubblicati nel topic "logging", con una corretta chiave di errore ad hoc.
+    * **KafkaHttpValue:** valore utilizzato per i messaggi pubblicati nel topic "logging", con chiave "http_errors".
+    * **KafkaOrderValue:** valore utilizzato per i messaggi pubblicati nel topic "orders", con chiave "order_paid
 ".
 
   ![KafkaMessages](./diagrams/kafkamessages.svg)
 
 
 - **Ipn & PaypalIpn:**
-  nel nostro progetto abbiamo due diversi tipi di servizi per gestire l'ipn:
-    * **Ipn simulato:** questo servizio viene utilizzato per simulare la ricezione di un Ipn. Questo servizio utilizzerà la classe Ipn POJO, che contiene solo gli attributi più importanti di un Ipn.
+  nel nostro progetto abbiamo due diversi tipi di servizi per gestire un ipn:
+    * **Ipn simulato:** questo servizio viene utilizzato per simulare la ricezione di un Ipn. Questo servizio utilizzerà la classe POJO Ipn, che contiene solo gli attributi più importanti di un Ipn.
 
       ![KafkaMessages](./diagrams/ipn.svg)
     * **Ipn reale:** questo servizio viene utilizzato per ricevere un Ipn reale, utilizzando il servizio sandbox di Paypal. Per questo abbiamo utilizzato la classe POJO PaypalIpn, che contiene tutti gli attributi che un vero Ipn potrebbe avere.
 
 
 - **Messaggio di ritorno:**
-  quando viene generato un errore http, HttpExceptionController lo acquisisce e genera un messaggio di ritorno utilizzando questa classe POJO.
+  quando viene generato un errore http, HttpExceptionController lo acquisisce e genera un messaggio di ritorno utilizzando la seguente classe POJO.
 
   ![KafkaMessages](diagrams/http.svg)
 
@@ -76,20 +76,20 @@ Per creare in maniera semplice messaggi e file JSON abbiamo utilizzato le seguen
 ---
 
 ## 3. Kafka & Heartbeat
-Questo microservizio utilizza il sistema di messaggistica Kafka per pubblicare in due argomenti, diversi tipi di informazioni di sistema:
-- **Logging topic:** questo argomento viene utilizzato per registrare tutti i messaggi di errore generati dal nostro microservizio. Esistono diversi tipi di errori:
-    * `Received_wrong_business_paypal_payment`: questo messaggio di errore viene generato dalla classe di servizio quando l'ipn ricevuto da Paypal contiene una mail aziendale del destinatario errata
-    * `Bad_ipn_error`: questo messaggio di errore viene generato dalla classe del servizio quando la richiesta paypal ricevuta non può essere verificata.
+Il nostro microservizio utilizza il sistema di messaggistica Kafka per pubblicare in due topic, diversi tipi di informazioni di sistema:
+- **Logging topic:** questo topic viene utilizzato per registrare tutti i messaggi di errore generati dal nostro microservizio. Esistono diversi tipi di errori:
+    * `Received_wrong_business_paypal_payment`: questo messaggio di errore viene generato dalla classe PaymentService quando l'ipn ricevuto da Paypal contiene una mail aziendale del destinatario errata
+    * `Bad_ipn_error`: questo messaggio di errore viene generato dalla classe PaymentService quando la richiesta Paypal ricevuta non può essere verificata.
     * `Http_error`: questo messaggio di errore viene generato quando HttpExceptionController acquisisce un errore http.
-- **Orders topic:** questo argomento viene utilizzato per registrare tutti i messaggi con la chiave order_paid. Questo tipo di messaggi viene generato quando un ipn è stato verificato con successo e salvato nella tabella dei pagamenti del database.
+- **Orders topic:** questo topic viene utilizzato per registrare tutti i messaggi con la chiave order_paid. Questo tipo di messaggi viene generato quando un ipn è stato verificato con successo e salvato nella tabella dei pagamenti del database.
 
 Le informazioni pubblicate dal nostro microservizio sono pronte per essere utilizzate da altri componenti che utilizzano Kafka.
 
-Nei nostri progetti abbiamo utilizzato l'interfaccia "Configurazione" per implementare le seguenti classi:
-- **KafkaProducerConfig:** classe utilizzata per creare i nostri argomenti e per esporre un "KafkaTemplate" utilizzato dal servizio di pagamento per pubblicare le nostre informazioni sul microservizio.
+Nei nostri progetti abbiamo utilizzato l'interfaccia "Configuration" per implementare le seguenti classi:
+- **KafkaProducerConfig:** classe utilizzata per creare i nostri topic e per esporre un "KafkaTemplate" utilizzato dal servizio di pagamento per pubblicare le informazioni del nostro microservizio.
 - **Heartbeater:** classe che implementa la strategia di ping in modalità hear-beat.
 
-La nostra classe heartbeater ripete periodicamente la funzione "heartbeat()", che controllerà la nostra connessione DB utilizzando una semplice query di selezione, e quindi farà una richiesta POST a `HEART_BEAT_URL_PING`
+La nostra classe heartbeater ripete periodicamente la funzione "heartbeat()", che controllerà la connessione al nostro DB utilizzando una semplice query di selezione, e successivamente farà una richiesta POST a `HEART_BEAT_URL_PING`
 con il seguente body:
 ```JSON
 {
@@ -109,11 +109,11 @@ I seguenti diagrammi UML mostrano le interfacce utilizzate per le nostre classi 
 Come richiesto, la nostra classe Payment Controller espone i seguenti endpoint:
 - `POST payment/ipn`: questo endpoint HTTP viene utilizzato per simulare una notifica di pagamento proveniente dal sistema Paypal.
 
-  La richiesta deve contenere un'intestazione denominata "X-User-ID" che contiene un ID utente che viene utilizzato dal servizio Paypal per generare correttamente un istanza di pagamento.
+  La richiesta deve contenere un header denominato "X-User-ID" che contiene uno userId che viene utilizzato dal servizio Paypal per generare correttamente un'istanza di pagamento.
 
-  In questo particolare scenario, la nostra classe Payment Service richiede un argomento "ipn simulato" per generare un istanza di pagamento: la funzione di verifica restituirà sempre un valore "vero".
+  In questo particolare scenario, la nostra classe Payment Service richiede un argomento "ipn simulato" per generare un'istanza di pagamento: la funzione di verifica restituirà sempre un valore "vero".
 
-  Per controllare facilmente se il corpo della richiesta ha tutto ciò che serve per generare una voce di pagamento, abbiamo creato una classe POJO chiamata "Ipn": il seguente JSON mostra un corpo della richiesta corretto secondo la classe Ipn:
+  Per controllare facilmente se il corpo della richiesta ha tutto ciò che serve per generare una voce di pagamento, abbiamo creato una classe POJO chiamata "Ipn": il seguente JSON mostra un corretto body di una richiesta secondo la classe Ipn:
   ``` JSON
   {
     "invoice":"asjldfbksdag224",
@@ -123,7 +123,7 @@ Come richiesto, la nostra classe Payment Controller espone i seguenti endpoint:
   } 
   ```
   
-Se la voce Pagamento viene creata correttamente, verranno restituite tutte le informazioni sul pagamento come mostrato di seguito:
+Se un'istanza di Payment viene creata correttamente, verranno restituite tutte le informazioni sul pagamento come mostrato di seguito:
   ``` JSON  
   {
     "id": 27,
@@ -155,6 +155,7 @@ Se la voce Pagamento viene creata correttamente, verranno restituite tutte le in
     "on0": "1"
   }
   ```
+  Per generare correttamente un URL di pagamento paypal si consiglia l'uso dello script disponibile al seguente link: https://github.com/Krytons/Paypal-URL-generator
 
   In questo scenario, la nostra classe Payment Service riceve un "Paypal Ipn" da Paypal, e in questo caso la funzione di verifica effettuerà una richiesta POST a paypal per verificare l'IPn.
 
@@ -185,17 +186,17 @@ Il seguente diagramma UML mostra le interfacce utilizzate per le nostre classi "
 
 ## 5. Gestione degli errori
 
-Quando una richiesta HTTP non riesce, il nostro microservizio deve pubblicare un messaggio nella registrazione degli argomenti. Per fare ciò, abbiamo introdotto la classe `HttpExceptionController` che usa l'annotazione `@ComponentAdvice`: questa annotazione è una specializzazione di `@Component`.
+Quando una richiesta HTTP fallisce, il nostro microservizio deve pubblicare un messaggio nel topic logging. Per fare ciò, abbiamo introdotto la classe `HttpExceptionController` che usa l'annotazione `@ComponentAdvice`: questa annotazione è una specializzazione di `@Component`.
 
 Grazie a @ComponentAdvice, la nostra classe `@ExceptionHandler` è in grado di dichiarare due metodi:
 - ``` Java
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> generateHttpErrorMessage(HttpServletRequest request, ResponseStatusException exception);
   ```
-  Questo metodo è in grado di gestire tutte le `ResponseStatusException` generated by our Controller or our Service.
+  Questo metodo è in grado di gestire tutte le `ResponseStatusException` generate dal nostro Controller o dal nostro Service.
 
-  Tali eccezioni possono essere di due tipo:
-  - `5xx`: questo è un errore del server, quindi il messaggio pubblicato nella registrazione dell'argomento conterrà la traccia dello stack dell'eccezione, come mostrato di seguito:
+  Tali eccezioni possono essere di due tipologie:
+  - `5xx`: questo è un errore del server, quindi il messaggio pubblicato nel topic logging conterrà lo stack trace dell'eccezione, come mostrato di seguito:
     ``` JSON
     {
       "key":"http_errors",
@@ -208,7 +209,7 @@ Grazie a @ComponentAdvice, la nostra classe `@ExceptionHandler` è in grado di d
       }
     }
     ```
-  - `4xx`: questo è un errore del client, quindi il messaggio pubblicato nella registrazione dell'argomento conterrà il codice di stato dell'eccezione, come mostrato di seguito:
+  - `4xx`: questo è un errore del client, quindi il messaggio pubblicato nel topic logging conterrà il codice di stato dell'eccezione, come mostrato di seguito:
     ``` JSON
     {
       "key":"http_errors",
