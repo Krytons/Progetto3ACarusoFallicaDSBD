@@ -46,6 +46,14 @@ In order to develop this project we have used the following elements:
   $ docker-compose up -build
   ```
 
+### Troubleshooting
+If our payment microservice fails to connect to MySQL database, there may be some problems with Docker's volumes.
+The following docker commands may solve this issue, but this will permanently delete the contents in your volume, wiping out any previous database you had there.
+```bash  
+  $ docker-compose down -v
+  $ docker-compose up -d
+```
+
 ---
 
 ## 2. POJO classes

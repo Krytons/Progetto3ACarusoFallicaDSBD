@@ -44,6 +44,14 @@ Gli strumenti da noi utilizzati per la realizzazione del progetto sono i seguent
   $ docker-compose up -build
   ```
 
+### Troubleshooting
+Se il nostro microservizio di pagamento non riesce a connettersi al database MySQL, potrebbero esserci dei problemi con i volumi di Docker.
+I seguenti comandi docker possono risolvere questo problema, ma ciò eliminerà definitivamente il contenuto nel volume, cancellando qualsiasi database precedente ivi contenuto.
+```bash  
+  $ docker-compose down -v
+  $ docker-compose up -d
+```
+
 ---
 
 ## 2. Classi POJO
