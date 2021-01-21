@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(path = "/payment")
@@ -25,23 +24,6 @@ public class PaymentController {
 
     @Autowired
     PaymentService service;
-
-    /*
-    @GetMapping(path = "/all")
-    public @ResponseBody Iterable<Payment> getAllPayments(){
-        return service.getAllPayment();
-    }
-
-    @GetMapping(path = "/id/{id}")
-    public @ResponseBody Payment getPaymentById(@PathVariable Integer id){
-        return service.getByPaymentId(id);
-    }
-
-    @PostMapping(path="/insert")
-    public @ResponseBody Payment insertPayment(@RequestBody Payment payment){
-        return service.insertPayment(payment);
-    }
-     */
 
     @GetMapping(path = "/transactions/{fromTimestamp}/{endTimestamp}")
     public @ResponseBody Iterable<Payment>

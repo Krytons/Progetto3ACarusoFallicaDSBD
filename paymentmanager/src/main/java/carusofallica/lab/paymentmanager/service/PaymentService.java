@@ -36,30 +36,6 @@ public class PaymentService {
     @Value("${kafkaTopicErrors}")
     private String topicErrors;
 
-    /*
-    public Iterable<Payment> getAllPayment(){
-        return repository.findAll();
-    }
-
-    public Payment getByPaymentId(Integer id){
-        try{
-            return repository.findById(id).get();
-        }
-        catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There are no payments with that id");
-        }
-    }
-
-    public Payment insertPayment(Payment payment){
-        try{
-            return repository.save(payment);
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid insert");
-        }
-    }
-     */
-
-
     //***** RICHIESTE DAL PROGETTO *****
     public void sendErrorMessage(String msg) {
         kafkaTemplate.send(topicErrors, msg);
