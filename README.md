@@ -6,7 +6,7 @@
 </p>
 
 ## Project for Distributed Systems Big Data 2020
-### Made by:
+### Developed by:
 - **Caruso Bartolomeo**
 - **Giuseppe Fallica**
 
