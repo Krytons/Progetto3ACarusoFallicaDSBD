@@ -10,7 +10,7 @@
 - **Caruso Bartolomeo**
 - **Giuseppe Fallica**
 
-## 1. Aim of this project
+## 1. Obiettivo del progetto
 Questo progetto mira a creare un microservizio che verrà utilizzato per gestire i pagamenti in una applicazione distribuita di e-commerce.
 
 Gli da noi utilizzati per la realizzazione del progetto sono stati:
@@ -46,15 +46,15 @@ Gli da noi utilizzati per la realizzazione del progetto sono stati:
 
 ---
 
-## 2. POJO classes
-In order to easily generate messages and JSON data, we've used the following POJO classes:
+## 2. Classi POJO
+Per creare in maniera semplice messaggi e file JSON abbiamo utilizzato le seguenti classi POJO:
 - **Kafka Message & Kafka Value:**
-  in our project we use Kafka to publish different kind of information into specific topics.
-  All the messages have the same base structure made of a "message key", and a "message body", so we've created a base class for the message body called
-  "KafkaValue" that is specialized into different kind of Values:
-    * **KafkaErrorValue:** value used for the messages published into "logging" topic, with a proper error key.
-    * **KafkaHttpValue:** value used for the messages published into "logging" topic, with key "http_errors".
-    * **KafkaOrderValue:** value used for the messages published into "orders" topic, with key "order_paid".
+  Nel nostro progetto usiamo Kafka per pubblicare diversi tipi di informazioni in argomenti specifici. 
+  Tutti i messaggi hanno la stessa struttura di base composta da un "message key" e un "message body", pertanto abbiamo creato una classe di base per il corpo del messaggio chiamata: "KafkaValue" caratterizzata da un insieme di valori:
+    * **KafkaErrorValue:** valore utilizzato per i messaggi pubblicati nell'argomento "logging", con una corretta           chiave di errore.
+    * **KafkaHttpValue:** valore utilizzato per i messaggi pubblicati nell'argomento "logging", con chiave      "http_errors".
+    * **KafkaOrderValue:** valore utilizzato per i messaggi pubblicati nell'argomento "orders", con chiave "order_paid
+".
 
   ![KafkaMessages](./diagrams/kafkamessages.svg)
 
