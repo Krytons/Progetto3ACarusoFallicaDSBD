@@ -11,20 +11,20 @@
 - **Giuseppe Fallica**
 
 ## 1. Aim of this project
-This project aims at creating a microservice that will be used to handle payments for an e-commerce distributed application.
+Questo progetto mira a creare un microservizio che verrà utilizzato per gestire i pagamenti in una applicazione distribuita di e-commerce.
 
-In order to develop this project we have used the following elements:
-- **MySQL database:** relational database, used inside a Docker container
-- **Kafka messaging system:** open source distributed event streaming platform, used to publish into a specific topic errors and critical data information
-- **Spring framework:** an open source framework used to develop java based applications.
-- **Apache Maven:** a project management and comprehension tool.
+Gli da noi utilizzati per la realizzazione del progetto sono stati:
+- **Database MySql:** database relazionale utilizzato all’interno di un container Docker
+- **Sistema di messaggistica Kafka:** piattaforma di streaming di eventi distribuita open source, utilizzata per pubblicare in un argomento specifico, errori e informazioni sui dati critici.
+- **Spring framework:** un framework open source utilizzato per sviluppare applicazioni basate su Java.
+- **Apache Maven:** uno strumento di gestione e comprensione dei progetti.
 
-### How to test our microservice
-- **Start docker:**
+### Come testare il nostro
+- **Avviare Docker:**
   ```bash
     $ docker start
   ```
-- **Create a .env file inside "Progetto3ACarusoFallicaDSBD" with the following arguments:**
+- **Creare un file .env dentro "Progetto3ACarusoFallicaDSBD" con i seguenti argomenti:**
   ```dotenv
     DB_DATABASE = #Your DB name
     DB_USER = #Your DB user
@@ -39,7 +39,7 @@ In order to develop this project we have used the following elements:
     HEART_BEAT_URL_PING = #URL that will be used by the heartbeating routine for the POST request.
   ```
 
-- **Open a terminal inside "Progetto3ACarusoFallicaDSBD" then use the following command:**
+- **Aprire il terminale all'interno del "Progetto3ACarusoFallicaDSBD" ed usare il seguente comando:**
   ```bash  
   $ docker-compose up -build
   ```
