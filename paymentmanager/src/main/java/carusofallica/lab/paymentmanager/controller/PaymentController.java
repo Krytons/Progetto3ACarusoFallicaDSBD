@@ -27,7 +27,7 @@ public class PaymentController {
 
     @GetMapping(path = "/transactions/{fromTimestamp}/{endTimestamp}")
     public @ResponseBody Iterable<Payment>
-    getPaymentByDate(@PathVariable long fromTimestamp, @PathVariable long endTimestamp, @RequestHeader Integer x_userId, HttpServletRequest request){
+    getPaymentByDate(@PathVariable long fromTimestamp, @PathVariable long endTimestamp, @RequestHeader Integer x_userId){
         Timestamp from = new Timestamp(fromTimestamp);
         Timestamp end = new Timestamp(endTimestamp);
         return service.getPaymentByDate(x_userId, from, end);

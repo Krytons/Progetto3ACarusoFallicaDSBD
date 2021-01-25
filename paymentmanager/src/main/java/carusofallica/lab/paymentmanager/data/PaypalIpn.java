@@ -1,8 +1,5 @@
 package carusofallica.lab.paymentmanager.data;
 
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
 public class PaypalIpn {
 
     private String option_name1;
