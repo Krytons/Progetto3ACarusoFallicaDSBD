@@ -169,7 +169,7 @@ Se un'istanza di Payment viene creata correttamente, verranno restituite tutte l
 
   Se l'Ipn ricevuto è valido, verrà creata una voce di pagamento e tutte le informazioni a riguardo verranno restituite come l'endpoint precedente.
 
-- `GET payment//transactions?fromTimestamp=unixTimestamp1&endTimestamp=unixTimestamp2`: questo endpoint HTTP viene utilizzato per ottenere tutte le transazioni effettuate tra i valori fromTimestamp e endTimestamp (espressi in unixTime).
+- `GET payment//transactions/fromTimestamp/endTimestamp`: questo endpoint HTTP viene utilizzato per ottenere tutte le transazioni effettuate tra i valori fromTimestamp e endTimestamp (espressi in unixTime).
 
   La richiesta deve contenere un Header denominato "X-User-ID": se il valore è 0 verranno restituite tutte le transazioni comprese tra fromTimestamp ed endTimestamp, se questo valore è diverso da 0 le transazioni restituite appartengono all'utente dell'identificativo dato.
 

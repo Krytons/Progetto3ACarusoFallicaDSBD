@@ -174,7 +174,7 @@ As requested, our Payment Controller class exposes the following endpoints:
 
   If the received Ipn is valid, a Payment entry will be created and all the information about it will be returned like the previous endpoint.
   
-- `GET payment//transactions?fromTimestamp=unixTimestamp1&endTimestamp=unixTimestamp2`: this HTTP endpoint is used to obtain all the transactions made between fromTimestamp and endTimestamp values (expressed in unixTime).
+- `GET payment//transactions/fromTimestamp/endTimestamp`: this HTTP endpoint is used to obtain all the transactions made between fromTimestamp and endTimestamp values (expressed in unixTime).
   
   The request must contain a Header called "X-User-ID": if the value is 0 all the transactions between fromTimestamp and endTimestamp will be returned, if this value is different from 0 the transactions returned belong to the user of the given identification.
 
